@@ -6,8 +6,7 @@ checking '''
 from typing import Any, List, Tuple
 
 
-def zoom_array(lst:
-    Tuple, factor: int = 2) -> List:
+def zoom_array(lst: Tuple, factor: int = 2) -> List:
     '''funtion
     a perfect zoom'''
     zoomed_in: List[Any] = [
