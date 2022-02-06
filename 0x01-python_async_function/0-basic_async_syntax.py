@@ -9,7 +9,6 @@ async def wait_random(max_delay: int = 10) -> float:
     """espera numero aleatorio
     Argumentos:
         max_delay (int, opcional): número máximo. El valor predeterminado es 10.
-
     Devoluciones:
         flotante: número flotante aleatorio
     """
