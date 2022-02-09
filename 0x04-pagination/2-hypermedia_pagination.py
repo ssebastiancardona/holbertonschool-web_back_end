@@ -79,12 +79,12 @@ class Server:
 
 def index_r(page: int, page_size: int) -> Tuple[int, int]:
     """
-    Range of the page
-    Args:
-        page: Current page
-        page_size: Total size of the page
-    Return:
-        tuple with the range start and end size page
+    Rango de la página
+    Argumentos:
+        página: página actual
+        page_size: tamaño total de la página
+    Regreso:
+        tupla con la página de tamaño inicial y final del rango
     """
 
     final_size: int = page * page_size
