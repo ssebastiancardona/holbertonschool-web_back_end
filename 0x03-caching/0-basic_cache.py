@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""BasicCache module"""
+"""modulo de cache basico"""
 from base_caching import BaseCaching
 
 
@@ -9,7 +9,7 @@ class BasicCache(BaseCaching):
         BaseCaching (clase): clase básica para esta clase
     """
 
-    def po(self, key, item):
+    def put(self, key, item):
         """poner un nuevo valor en el diccionario cache_data
         Argumentos:
             clave ([tipo]): clave del diccionario self.cache_data
@@ -18,7 +18,7 @@ class BasicCache(BaseCaching):
         if key and item:
             self.cache_data[key] = item
 
-    def obt(self, key):
+    def get(self, key):
         """Obtener el valor del diccionario cache_data
         Argumentos:
             clave ([tipo]): clave para buscar en cache_data
