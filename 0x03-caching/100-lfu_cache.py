@@ -1,59 +1,69 @@
 #!/usr/bin/python3
-"""module
+""" catch
 """
-from base_caching import BaseCaching
+from datetime import datetime
+from collections import defaultdict
+BaseCaching = __import__('base_caching').BaseCaching
 
 
 class LFUCache(BaseCaching):
-    """clase LFU
-    Argumentos:
-        BaseCaching (clase): clase básica para esta clase
+    """ def
     """
     def __init__(self):
-        """const"""
+        """ begin
+        """
         super().__init__()
-        self.__keys = []
-        self.__counter = {}
+        self.cache_by_time = {}
+        self.cache_by_frequency_use = defaultdict(int)  # >>> Default value: 0
 
     def put(self, key, item):
-        """poner el elemento en cache_data con el algoritmo LFU
-        Argumentos:
-            clave ([tipo]): clave del diccionario
-            elemento ([tipo]): elemento para insertar en el diccionario
         """
-        if not key or not item:
-            return
-        if len(self.cache_data) == self.MAX_ITEMS and key not in self.__keys:
-            self.discard()
-        if key not in self.cache_data:
-            self.__counter[key] = 1
-        else:
-            self.__counter[key] += 1
-            self.__keys.remove(key)
-        self.__keys.append(key)
-        self.cache_data[key] = item
+        Assign to the dictionary
+        """
+        if key and item:
+            self.cache_by_time[key] = datetime.now()
+            self.cache_data[key] = item
+            self.cache_by_frequency_use[key] += 1
+
+            if len(self.cache_data) > BaseCaching.MAX_ITEMS:
+                # Sorted elements by frequency_used
+                frequency_use_filtered = {}
+                for ge, fo in self.cache_by_frequency_use.items():
+                    if ge != key:
+                        frequency_use_filtered[ge] = fo
+                keys_by_frequency_used = sorted(frequency_use_filtered,
+                                                key=frequency_use_filtered.get)
+                key_to_delete = keys_by_frequency_used[0]
+
+                # There are more elements with same frequency used count?
+                count = frequency_use_filtered[key_to_delete]
+                posibles_elements_to_discard_dict = {}
+                for ge, fo in frequency_use_filtered.items():
+                    if fo == count:
+                        posibles_elements_to_discard_dict[ge] = fo
+                if len(posibles_elements_to_discard_dict) > 1:
+                    elements_to_discard_by_time = {}
+                    for ge, fo in self.cache_by_time.items():
+                        if ge in posibles_elements_to_discard_dict.keys():
+                            elements_to_discard_by_time[ge] = fo
+
+                    elements_by_time = sorted(
+                                          elements_to_discard_by_time,
+                                          key=elements_to_discard_by_time.get)
+                    key_to_delete = elements_by_time[0]
+
+                # Delete element with least_frequency_used
+                del self.cache_by_time[key_to_delete]
+                del self.cache_data[key_to_delete]
+                del self.cache_by_frequency_use[key_to_delete]
+                print('DISCARD: {}'.format(key_to_delete))
 
     def get(self, key):
-        """Obtener el valor del diccionario cache_data
-        Argumentos:
-            clave ([tipo]): clave para buscar en cache_data
         """
-        if not key or key not in self.cache_data:
-            return None
-        self.__counter[key] += 1
-        self.__keys.remove(key)
-        self.__keys.append(key)
-        return self.cache_data[key]
-
-    def discard(self):
-        """discard item and print
+            Return the value in self.cache_data linked to key
         """
-        m_time = min(self.__counter.values())
-        keys = [k for k, v in self.__counter.items() if v == m_time]
-        low = 0
-        while self.__keys[low] not in keys:
-            low += 1
-        discard = self.__keys.pop(low)
-        del self.cache_data[discard]
-        del self.__counter[discard]
-        print('DISCARD: {}'.format(discard))
+        element = self.cache_data.get(key)
+        if element:
+            self.cache_by_time[key] = datetime.now()
+            self.cache_by_frequency_use[key] += 1
+        return element
