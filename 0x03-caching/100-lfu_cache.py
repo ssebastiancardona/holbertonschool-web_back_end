@@ -46,14 +46,14 @@ class LFUCache(BaseCaching):
         return self.cache_data[key]
 
     def discard(self):
-        """descartar elemento e imprimir
+        """discard item and print
         """
         m_time = min(self.__counter.values())
-        key = [k for k, v in self.__counter.items() if v == m_time]
-        l = 0
-        while self.__keys[l] not in key:
-            l += 1
-        discard = self.__keys.pop(l)
+        keys = [k for k, v in self.__counter.items() if v == m_time]
+        low = 0
+        while self.__keys[low] not in keys:
+            low += 1
+        discard = self.__keys.pop(low)
         del self.cache_data[discard]
         del self.__counter[discard]
         print('DISCARD: {}'.format(discard))
