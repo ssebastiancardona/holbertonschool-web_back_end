@@ -11,7 +11,6 @@ class FIFOCache(BaseCaching):
         BaseCaching (clase): clase básica para esta clase
     """
 
-
     def __init__(self):
         super().__init__()
         self.__keys = []
