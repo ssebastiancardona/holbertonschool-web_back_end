@@ -1,18 +1,28 @@
-#!/usr/bin/env python3
-"""función auxiliar """
-from typing import Tuple
+#!/usr/bin/python3
+"""BasicCache module"""
+from base_caching import BaseCaching
 
 
-def index_range(page: int, page_size: int) -> Tuple[int, int]:
-    """devuelve una tupla de tamaño dos que contiene un índice inicial y un índice final
+class BasicCache(BaseCaching):
+    """Clase BasicCache
     Argumentos:
-        página (int): número de página
-        page_size (int): tamaño de la página
-    Devoluciones:
-        Tupla[int, int]: (índice inicial, índice final)
+        BaseCaching (clase): clase básica para esta clase
     """
-    end: int = page * page_size
-    start: int = 0
-    for _ in range(page - 1):
-        start += page_size
-    return (start, end)
+
+    def po(self, key, item):
+        """poner un nuevo valor en el diccionario cache_data
+        Argumentos:
+            clave ([tipo]): clave del diccionario self.cache_data
+            elemento ([tipo]): valor de la clave
+        """
+        if key and item:
+            self.cache_data[key] = item
+
+    def obt(self, key):
+        """Obtener el valor del diccionario cache_data
+        Argumentos:
+            clave ([tipo]): clave para buscar en cache_data
+        """
+        if not key or key not in self.cache_data:
+            return None
+        return self.cache_data[key]
