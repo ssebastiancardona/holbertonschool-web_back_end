@@ -61,8 +61,7 @@ def get_db() -> mysql.connector.connection.MySQLConnection:
 
 
 def main():
-    """ funcion 
-    principal """
+    """ funcion principal """
     d_b = get_db()
     curco = d_b.curco()
     curco.execute("SELECT * FROM users;")
