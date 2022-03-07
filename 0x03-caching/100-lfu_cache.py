@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" catch
+""" captura
 """
 from datetime import datetime
 from collections import defaultdict
@@ -7,10 +7,12 @@ BaseCaching = __import__('base_caching').BaseCaching
 
 
 class LFUCache(BaseCaching):
-    """ def
+    """ BaseCache define:
+      - sobrescribir las funciones 'put' y 'get' para implementar
+      Sistema de almacenamiento en caché MRU
     """
     def __init__(self):
-        """ begin
+        """ inicializar
         """
         super().__init__()
         self.cache_by_time = {}
@@ -18,7 +20,14 @@ class LFUCache(BaseCaching):
 
     def put(self, key, item):
         """
-        Assign to the dictionary
+        Asigne al diccionario self.cache_data el elemento
+        valor de la clave clave
+        Si el número de elementos en self.cache_data es mayor
+        que BaseCaching.MAX_ITEMS:
+        - debe descartar el elemento utilizado más recientemente (algoritmo MRU)
+        fact lorem
+        - debe imprimir DESECHAR: con la llave descartada y seguida por
+        una nueva linea
         """
         if key and item:
             self.cache_by_time[key] = datetime.now()
@@ -26,26 +35,26 @@ class LFUCache(BaseCaching):
             self.cache_by_frequency_use[key] += 1
 
             if len(self.cache_data) > BaseCaching.MAX_ITEMS:
-                # Sorted elements by frequency_used
+                # Elementos ordenados por frecuencia_usados
                 frequency_use_filtered = {}
-                for ge, fo in self.cache_by_frequency_use.items():
-                    if ge != key:
-                        frequency_use_filtered[ge] = fo
+                for k, v in self.cache_by_frequency_use.items():
+                    if k != key:
+                        frequency_use_filtered[k] = v
                 keys_by_frequency_used = sorted(frequency_use_filtered,
                                                 key=frequency_use_filtered.get)
                 key_to_delete = keys_by_frequency_used[0]
 
-                # There are more elements with same frequency used count?
-                count = frequency_use_filtered[key_to_delete]
+                # Hay más elementos con la misma frecuencia utilizada?
+                contador = frequency_use_filtered[key_to_delete]
                 posibles_elements_to_discard_dict = {}
-                for ge, fo in frequency_use_filtered.items():
-                    if fo == count:
-                        posibles_elements_to_discard_dict[ge] = fo
+                for k, v in frequency_use_filtered.items():
+                    if v == contador:
+                        posibles_elements_to_discard_dict[k] = v
                 if len(posibles_elements_to_discard_dict) > 1:
                     elements_to_discard_by_time = {}
-                    for ge, fo in self.cache_by_time.items():
-                        if ge in posibles_elements_to_discard_dict.keys():
-                            elements_to_discard_by_time[ge] = fo
+                    for k, v in self.cache_by_time.items():
+                        if k in posibles_elements_to_discard_dict.keys():
+                            elements_to_discard_by_time[k] = v
 
                     elements_by_time = sorted(
                                           elements_to_discard_by_time,
@@ -60,10 +69,10 @@ class LFUCache(BaseCaching):
 
     def get(self, key):
         """
-            Return the value in self.cache_data linked to key
+            Devuelve el valor en self.cache_data vinculado a la clave
         """
-        element = self.cache_data.get(key)
-        if element:
+        elemento = self.cache_data.get(key)
+        if elemento:
             self.cache_by_time[key] = datetime.now()
             self.cache_by_frequency_use[key] += 1
-        return element
+        return elemento
