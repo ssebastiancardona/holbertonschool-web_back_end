@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-""" principal main """
+""" Regex-ing, formateador de registros, crear registrador, conectarse a una base de datos segura,
+    Leer y filtrar datos """
 from typing import List
 import re
 import logging
 import os
 import mysql.connector
 PII_FIELDS = ('name', 'email', 'phone', 'ssn', 'password')
+""" que contiene los campos de user_data.csv que se consideran PII. """
 
 
 class RedactingFormatter(logging.Formatter):
-    """ Clase de formateador de redacción
+    """ Redacting Formatter class
         """
 
     REDACTION = "***"
@@ -27,11 +29,11 @@ class RedactingFormatter(logging.Formatter):
                             super().format(record), self.SEPARATOR)
 
 
-def filter_datum(fields: List[str],                 redaction: str,
+def filter_datum(fields: List[str],
+                 redaction: str,
                  message: str,
                  separator: str) -> str:
-    """ return the log
-    message """
+    """ devuelve el mensaje de registro ofuscado """
     for item in fields:
         message = re.sub(fr'{item}=.+?{separator}',
                          f'{item}={redaction}{separator}', message)
@@ -39,8 +41,7 @@ def filter_datum(fields: List[str],                 redaction: str,
 
 
 def get_logger() -> logging.Logger:
-    """ metodo
-    logger """
+    """ devuelve un objeto logging.Logger """
     logger = logging.getLogger("user_data")
     logger.setLevel(logging.INFO)
     logger.propagate = False
@@ -51,21 +52,21 @@ def get_logger() -> logging.Logger:
 
 
 def get_db() -> mysql.connector.connection.MySQLConnection:
-    """ funcion solicitud
-    db """
+    """ devuelve un conector a la base de datos """
     return mysql.connector.connect(
-        host=os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost'),
-        database=os.environ.get('PERSONAL_DATA_DB_NAME', 'root'),
-        user=os.environ.get('PERSONAL_DATA_DB_USERNAME'),
-        password=os.environ.get('PERSONAL_DATA_DB_PASSWORD', ''))
+                    host=os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost'),
+                    database=os.environ.get('PERSONAL_DATA_DB_NAME', 'root'),
+                    user=os.environ.get('PERSONAL_DATA_DB_USERNAME'),
+                    password=os.environ.get('PERSONAL_DATA_DB_PASSWORD', ''))
 
 
 def main():
-    """ funcion principal """
-    d_b = get_db()
-    curco = d_b.curco()
-    curco.execute("SELECT * FROM users;")
-    result = curco.fetchall()
+    """ obtenga una conexión de base de datos usando get_db y recupere todas las filas en el
+        tabla de usuarios y muestra cada fila en un formato filtrado """
+    db = get_db()
+    curso = db.cursor()
+    curso.execute("SELECT * FROM users;")
+    result = curso.fetchall()
     for row in result:
         message = f"name={row[0]}; " + \
                   f"email={row[1]}; " + \
@@ -77,8 +78,8 @@ def main():
                                        None, None, message, None, None)
         formatter = RedactingFormatter(PII_FIELDS)
         formatter.format(log_record)
-    curco.close()
-    d_b.close()
+    curso.close()
+    db.close()
 
 
 if __name__ == "__main__":
