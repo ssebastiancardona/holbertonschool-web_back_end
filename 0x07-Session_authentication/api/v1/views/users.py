@@ -1,50 +1,55 @@
 #!/usr/bin/env python3
-""" Módulo de Vistas de Usuarios
+""" Module of Users views
 """
-from api.v1.views import app_vista
+from api.v1.views import app_views
 from flask import abort, jsonify, request
 from models.user import User
 
 
-@app_vista.route('/users', methods=['GET'], strict_slashes=False)
+@app_views.route('/users', methods=['GET'], strict_slashes=False)
 def view_all_users() -> str:
-    """ OBTENER /api/v1/usuarios
-    Regreso:
-      - lista de todos los objetos de usuario representados por JSON
+    """ GET /api/v1/users
+    Return:
+      - list of all User objects JSON represented
     """
     all_users = [user.to_json() for user in User.all()]
     return jsonify(all_users)
 
 
-@app_vista.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/users/<user_id>', methods=['GET'], strict_slashes=False)
 def view_one_user(user_id: str = None) -> str:
-    """ OBTENER /api/v1/usuarios/:id
-    Parámetro de ruta:
-      - Identificación de usuario
-    Regreso:
-      - Objeto de usuario JSON representado
-      - 404 si el ID de usuario no existe
+    """ GET /api/v1/users/:id
+    Path parameter:
+      - User ID
+    Return:
+      - User object JSON represented
+      - 404 if the User ID doesn't exist
     """
-    if user_id == "me" and request.current_user is None:
-        abort(404)
-    if user_id == "me" and request.current_user is not None:
-        return jsonify(request.current_user.to_json())
+
     if user_id is None:
         abort(404)
+
+    if user_id == "me" and request.current_user is None:
+        abort(404)
+
+    if user_id == "me" and request.current_user is not None:
+        return jsonify(request.current_user.to_json())
+
     user = User.get(user_id)
     if user is None:
         abort(404)
+
     return jsonify(user.to_json())
 
 
-@app_vista.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/users/<user_id>', methods=['DELETE'], strict_slashes=False)
 def delete_user(user_id: str = None) -> str:
-    """ ELIMINAR /api/v1/usuarios/:id
-    Parámetro de ruta:
-      - Identificación de usuario
-    Regreso:
-      - JSON vacío es que el usuario se eliminó correctamente
-      - 404 si el ID de usuario no existe
+    """ DELETE /api/v1/users/:id
+    Path parameter:
+      - User ID
+    Return:
+      - empty JSON is the User has been correctly deleted
+      - 404 if the User ID doesn't exist
     """
     if user_id is None:
         abort(404)
@@ -55,17 +60,17 @@ def delete_user(user_id: str = None) -> str:
     return jsonify({}), 200
 
 
-@app_vista.route('/users', methods=['POST'], strict_slashes=False)
+@app_views.route('/users', methods=['POST'], strict_slashes=False)
 def create_user() -> str:
-    """ POST /api/v1/usuarios/
-    Cuerpo JSON:
-      - Email
-      - clave
-      - apellido (opcional)
-      - Nombre (opcional)
-    Regreso:
-      - Objeto de usuario JSON representado
-      - 400 si no se puede crear el nuevo Usuario
+    """ POST /api/v1/users/
+    JSON body:
+      - email
+      - password
+      - last_name (optional)
+      - first_name (optional)
+    Return:
+      - User object JSON represented
+      - 400 if can't create the new User
     """
     rj = None
     error_msg = None
@@ -93,18 +98,18 @@ def create_user() -> str:
     return jsonify({'error': error_msg}), 400
 
 
-@app_vista.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/users/<user_id>', methods=['PUT'], strict_slashes=False)
 def update_user(user_id: str = None) -> str:
-    """ PUT /api/v1/usuarios/:id
-    Parámetro de ruta:
-      - Identificación de usuario
-    Cuerpo JSON:
-      - apellido (opcional)
-      - Nombre (opcional)
-    Regreso:
-      - Objeto de usuario JSON representado
-      - 404 si el ID de usuario no existe
-      - 400 si no se puede actualizar el Usuario
+    """ PUT /api/v1/users/:id
+    Path parameter:
+      - User ID
+    JSON body:
+      - last_name (optional)
+      - first_name (optional)
+    Return:
+      - User object JSON represented
+      - 404 if the User ID doesn't exist
+      - 400 if can't update the User
     """
     if user_id is None:
         abort(404)

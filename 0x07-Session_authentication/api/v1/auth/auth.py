@@ -1,57 +1,65 @@
 #!/usr/bin/env python3
+""" Module of Authentication
 """
-manejar la autenticación con una clase
-"""
-
-from os import getenv
-from typing import List, TypeVar
 from flask import request
+from typing import List, TypeVar
+from os import getenv
 
 
-class Auth():
-    """una clase para comprobar la autenticación básica de las rutas
-    """
+class Auth:
+    """ Class to manage the API authentication """
 
-    def require_auth(self, path: str, excluded_paths:
-        List[str]) -> bool:
-        """si la ruta necesita autenticación
-        """
-        if (path is None) or (excluded_paths is None or
-                              len(excluded_paths) == 0):
+    def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
+        """ Method for validating if endpoint requires auth """
+        if path is None or excluded_paths is None or excluded_paths == []:
             return True
 
-        if path[-1] == '/':
-            if path in excluded_paths:
-                return False
+        l_pat = len(path)
+        if l_pat == 0:
             return True
 
-        path_sl = path + '/'
-        if path_sl in excluded_paths:
-            return False
+        slas_path = True if path[l_pat - 1] == '/' else False
+
+        tmp_pat = path
+        if not slas_path:
+            tmp_pat += '/'
+
+        for exc in excluded_paths:
+            l_ex = len(exc)
+            if l_ex == 0:
+                continue
+
+            if exc[l_ex - 1] != '*':
+                if tmp_pat == exc:
+                    return False
+            else:
+                if exc[:-1] == path[:l_ex - 1]:
+                    return False
+
         return True
 
     def authorization_header(self, request=None) -> str:
-        """compruebe si el encabezado recibe la autenticación
-        """
-        if (request is None):
-            return None
-
-        if "Authorization" not in request.headers.keys():
-            return None
-
-        return request.headers["Authorization"]
-
-    def current_user(self, request=None) -> TypeVar('User'):
-        """Devuelve la usuario de registro actual
-        """
-        return None
-
-    def session_cookie(self, request=None):
-        """devuelve el valor de la cookie en función de la solicitud
-        """
+        """ Método que maneja el encabezado de autorización """
         if request is None:
             return None
 
-        id_sesion = getenv("SESSION_NAME")
-        galleta = request.cookies.get(id_sesion)
-        return galleta
+        return request.headers.get("Authorization", None)
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """ Valida el usuario actual """
+        return None
+
+    def session_cookie(self, request=None):
+        """Devuelve un valor de cookie de una solicitud"""
+
+        if request is None:
+            return None
+
+        SESSION_NAME = getenv("SESSION_NAME")
+
+        if SESSION_NAME is None:
+            return None
+
+        sesion_id = request.cookies.get(SESSION_NAME)
+
+        return sesion_id
