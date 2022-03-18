@@ -1,6 +1,6 @@
 -- sql languaje holbsc
-CREATE PROCEDURE ComputeAverageWeightedScoreForUsers() BEGIN
 delimiter |
+CREATE PROCEDURE ComputeAverageWeightedScoreForUsers() BEGIN
 UPDATE
 	users
 SET
