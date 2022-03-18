@@ -18,7 +18,6 @@ WHERE
 			projects
 	);
 
-
 INSERT INTO
 	corrections (user_id, project_id, score)
 VALUES
