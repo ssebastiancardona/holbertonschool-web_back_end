@@ -1,10 +1,10 @@
 -- sql languaje holbsc
 SELECT
-	band_name,
-	ifnull(split, YEAR(CURDATE())) - formed as lifespan
+	DISTINCT `band_name`,
+	IFNULL(`split`, 2020) - `formed` as `lifespan`
 FROM
-	metal_bands
+	`metal_bands`
 WHERE
-	style LIKE "%Glam rock%"
+	FIND_IN_SET('Glam rock', style)
 ORDER BY
-	lifespan DESC;
+	`lifespan` DESC;
