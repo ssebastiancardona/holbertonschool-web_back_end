@@ -1,19 +1,17 @@
 -- sql languaje holbsc
-delimiter / / CREATE PROCEDURE ComputeAverageWeightedScoreForUser(IN user_id INT) BEGIN
-UPDATE
-	users
-SET
-	average_score = (
-		SELECT
-			sum(p.weight * c.score) / sum(p.weight)
-		FROM
-			projects AS p
-			INNER JOIN corrections AS c ON p.id = c.project_id
-			AND c.user_id = user_id
-	)
-WHERE
-	users.id = user_id;
-
+DROP PROCEDURE IF EXISTS ComputeAverageWeightedScoreForUser;
+DELIMITER |
+CREATE PROCEDURE ComputeAverageWeightedScoreForUser(
+  user_id INT)
+BEGIN
+  DECLARE w_avg_score FLOAT;
+  SET w_avg_score = (SELECT SUM(score * weight) / SUM(weight)
+    FROM users AS U
+    JOIN corrections as C ON U.id=C.user_id
+    JOIN projects AS P ON C.project_id=P.id
+    WHERE U.id=user_id);
+  UPDATE users SET average_score = w_avg_score WHERE id=user_id;
 END;
+|
 
-/ /
+//
