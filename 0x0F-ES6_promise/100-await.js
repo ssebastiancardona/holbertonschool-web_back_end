@@ -3,16 +3,16 @@ import { uploadPhoto, createUser } from './utils';
 export default async function asyncUploadUser() {
   const obj = {};
   try {
-    const usr = await createUser();
-    const phot = await uploadPhoto();
+    const user = await createUser();
+    const photo = await uploadPhoto();
     Object.assign(obj, {
-      phot,
-      usr,
+      photo,
+      user,
     });
   } catch (err) {
     Object.assign(obj, {
-      phot: null,
-      usr: null,
+      photo: null,
+      user: null,
     });
   }
   return obj;
